@@ -6,6 +6,7 @@
  */
 
 import React from 'react';
+<<<<<<< HEAD
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -13,18 +14,31 @@ import HomeScreen from './Screens/HomeScreen'; //This will change as it is a fil
 import type {PropsWithChildren} from 'react';
 import { Button, Text, View, } from 'react-native';
 
+=======
+import type {PropsWithChildren} from 'react';
+>>>>>>> 5ab57a2 (Initial commit)
 import {
   SafeAreaView,
   ScrollView,
   StatusBar,
   StyleSheet,
+<<<<<<< HEAD
   useColorScheme,
+=======
+  Text,
+  useColorScheme,
+  View,
+>>>>>>> 5ab57a2 (Initial commit)
 } from 'react-native';
 
 import {
   Colors,
   DebugInstructions,
   Header,
+<<<<<<< HEAD
+=======
+  LearnMoreLinks,
+>>>>>>> 5ab57a2 (Initial commit)
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 
@@ -32,6 +46,7 @@ type SectionProps = PropsWithChildren<{
   title: string;
 }>;
 
+<<<<<<< HEAD
 type RootStackParamList = {
   Home: undefined; 
 };
@@ -42,6 +57,8 @@ type Props = {
   navigation: HomeScreenNavigationProp;
 };
 
+=======
+>>>>>>> 5ab57a2 (Initial commit)
 function Section({children, title}: SectionProps): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
   return (
@@ -68,8 +85,11 @@ function Section({children, title}: SectionProps): React.JSX.Element {
   );
 }
 
+<<<<<<< HEAD
 const Stack = createStackNavigator();
 
+=======
+>>>>>>> 5ab57a2 (Initial commit)
 function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
 
@@ -79,12 +99,43 @@ function App(): React.JSX.Element {
 
   return (
     <SafeAreaView style={backgroundStyle}>
+<<<<<<< HEAD
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} backgroundColor={backgroundStyle.backgroundColor} />
       <NavigationContainer>
             <Stack.Navigator initialRouteName="Home">
             <Stack.Screen name = "Home" component={HomeScreen} options={{title: 'Account Overview'}}/>
             </Stack.Navigator>  
           </NavigationContainer>
+=======
+      <StatusBar
+        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
+        backgroundColor={backgroundStyle.backgroundColor}
+      />
+      <ScrollView
+        contentInsetAdjustmentBehavior="automatic"
+        style={backgroundStyle}>
+        <Header />
+        <View
+          style={{
+            backgroundColor: isDarkMode ? Colors.black : Colors.white,
+          }}>
+          <Section title="Step One">
+            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
+            screen and then come back to see your edits.
+          </Section>
+          <Section title="See Your Changes">
+            <ReloadInstructions />
+          </Section>
+          <Section title="Debug">
+            <DebugInstructions />
+          </Section>
+          <Section title="Learn More">
+            Read the docs to discover what to do next:
+          </Section>
+          <LearnMoreLinks />
+        </View>
+      </ScrollView>
+>>>>>>> 5ab57a2 (Initial commit)
     </SafeAreaView>
   );
 }

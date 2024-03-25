@@ -1,4 +1,9 @@
 {
+<<<<<<< HEAD
   "name": "AwesomeProject",
   "displayName": "AwesomeProject"
+=======
+  "name": "JustABudgetApp",
+  "displayName": "JustABudgetApp"
+>>>>>>> 5ab57a2 (Initial commit)
 }

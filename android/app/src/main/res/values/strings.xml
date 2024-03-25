@@ -1,3 +1,7 @@
 <resources>
+<<<<<<< HEAD
     <string name="app_name">AwesomeProject</string>
+=======
+    <string name="app_name">JustABudgetApp</string>
+>>>>>>> 5ab57a2 (Initial commit)
 </resources>

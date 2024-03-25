@@ -74,9 +74,15 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
+<<<<<<< HEAD
     namespace "com.awesomeproject"
     defaultConfig {
         applicationId "com.awesomeproject"
+=======
+    namespace "com.justabudgetapp"
+    defaultConfig {
+        applicationId "com.justabudgetapp"
+>>>>>>> 5ab57a2 (Initial commit)
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
@@ -108,10 +114,14 @@ dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
     implementation("com.facebook.react:flipper-integration")
+<<<<<<< HEAD
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
     implementation 'androidx.appcompat:appcompat:1.1.0'
     
+=======
+
+>>>>>>> 5ab57a2 (Initial commit)
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")
     } else {
