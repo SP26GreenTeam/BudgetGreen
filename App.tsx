@@ -1,11 +1,5 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
 import React from 'react';
+<<<<<<< HEAD
 <<<<<<< HEAD
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -41,11 +35,19 @@ import {
 >>>>>>> 5ab57a2 (Initial commit)
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
+=======
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { StackNavigationProp } from '@react-navigation/stack';
+import HomeScreen from './Screens/HomeScreen';
+import PlaidLoginScreen from './Screens/PlaidLoginScreen';
+import { RootStackParamList } from './RootStack';
 
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
+>>>>>>> 0e0549a (Plaid Login Screen and Local server to get the keys for the API. Plaid login is still not fully functional but the screen does not break anything)
 
+type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'HomeScreen'>;
+
+<<<<<<< HEAD
 <<<<<<< HEAD
 type RootStackParamList = {
   Home: undefined; 
@@ -53,10 +55,13 @@ type RootStackParamList = {
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>;
 
+=======
+>>>>>>> 0e0549a (Plaid Login Screen and Local server to get the keys for the API. Plaid login is still not fully functional but the screen does not break anything)
 type Props = {
   navigation: HomeScreenNavigationProp;
 };
 
+<<<<<<< HEAD
 =======
 >>>>>>> 5ab57a2 (Initial commit)
 function Section({children, title}: SectionProps): React.JSX.Element {
@@ -84,6 +89,9 @@ function Section({children, title}: SectionProps): React.JSX.Element {
     </View>
   );
 }
+=======
+const Stack = createStackNavigator();
+>>>>>>> 0e0549a (Plaid Login Screen and Local server to get the keys for the API. Plaid login is still not fully functional but the screen does not break anything)
 
 <<<<<<< HEAD
 const Stack = createStackNavigator();
@@ -91,13 +99,8 @@ const Stack = createStackNavigator();
 =======
 >>>>>>> 5ab57a2 (Initial commit)
 function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
   return (
+<<<<<<< HEAD
     <SafeAreaView style={backgroundStyle}>
 <<<<<<< HEAD
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} backgroundColor={backgroundStyle.backgroundColor} />
@@ -137,26 +140,15 @@ function App(): React.JSX.Element {
       </ScrollView>
 >>>>>>> 5ab57a2 (Initial commit)
     </SafeAreaView>
+=======
+      <NavigationContainer>
+            <Stack.Navigator initialRouteName="Home Screen">
+            <Stack.Screen name = "HomeScreen" component={HomeScreen}/>
+            <Stack.Screen name = "PlaidLoginScreen" component={PlaidLoginScreen} />
+            </Stack.Navigator>  
+      </NavigationContainer>
+>>>>>>> 0e0549a (Plaid Login Screen and Local server to get the keys for the API. Plaid login is still not fully functional but the screen does not break anything)
   );
 }
-
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
 
 export default App;
