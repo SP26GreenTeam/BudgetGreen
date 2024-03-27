@@ -1,14 +1,12 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { StackNavigationProp } from '@react-navigation/stack';
 import { GoalsProvider } from './GoalsContext';
 import HomeScreen from './Screens/HomeScreen';
 import LoginScreen from './Screens/LoginScreen'
 import SignupScreen from './Screens/SignupScreen'
 import PlaidLoginScreen from './Screens/PlaidLoginScreen';
 import GoalsnTrends from './Screens/Goals';
-import { RootStackParamList } from './RootStack';
 
 
 const Stack = createStackNavigator();
