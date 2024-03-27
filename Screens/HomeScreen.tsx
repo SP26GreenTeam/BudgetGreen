@@ -1,8 +1,12 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 import React from 'react';
 =======
 import React, { useState, useCallback, useEffect } from 'react';
 >>>>>>> 0e0549a (Plaid Login Screen and Local server to get the keys for the API. Plaid login is still not fully functional but the screen does not break anything)
+=======
+import React, { useState,  useEffect } from 'react';
+>>>>>>> 5ca7f60 (GoalsContext that overarchs everything for now and the GoalsnTrends screen that is fully functional with the given set up of the code.)
 import { View, Text, StyleSheet, Button } from 'react-native';
 import type {PropsWithChildren} from 'react';
 import RNPickerSelect from 'react-native-picker-select';
@@ -11,7 +15,12 @@ import { StackNavigationProp } from '@react-navigation/stack';
 =======
 import { RootStackParamList } from '../RootStack';
 import { useIsFocused } from '@react-navigation/native';
+<<<<<<< HEAD
 >>>>>>> 0e0549a (Plaid Login Screen and Local server to get the keys for the API. Plaid login is still not fully functional but the screen does not break anything)
+=======
+import { useGoals } from '../GoalsContext';
+
+>>>>>>> 5ca7f60 (GoalsContext that overarchs everything for now and the GoalsnTrends screen that is fully functional with the given set up of the code.)
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -44,9 +53,9 @@ const HomeScreen = ({ navigation } : Props) => {
           ]}
 =======
 
-
 const HomeScreen: React.FC<Props> = ({navigation}) => {
-  //state for controling the selected value
+  const { goals } = useGoals();
+  const highestPriorityGoal = goals.sort((a, b) => a.priority - b.priority)[0] || null;
   const isFocused = useIsFocused();
 
   useEffect(() => {
@@ -121,6 +130,13 @@ const HomeScreen: React.FC<Props> = ({navigation}) => {
             <Text>$750.00</Text>
           </View>
         </View>
+        {highestPriorityGoal && (
+          <View style={styles.fullWidthSection}>
+            <Text style={styles.sectionTitle}>Top Priority Goal</Text>
+            <Text>{highestPriorityGoal.title} - ${highestPriorityGoal.amount.toFixed(2)}</Text>
+            <Text>Priority Level: {highestPriorityGoal.priority}</Text>
+          </View>
+        )}
       </View>
     </View>
   );
@@ -137,6 +153,11 @@ const styles = StyleSheet.create({
     top: 10, 
     left: 10, 
     zIndex: 10, 
+  },
+  fullWidthSection: {
+    width: '100%', 
+    alignItems: 'center', 
+    marginBottom: 10,
   },
   container: {
     flex: 1,

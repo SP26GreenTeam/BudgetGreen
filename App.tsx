@@ -39,8 +39,10 @@ import {
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { StackNavigationProp } from '@react-navigation/stack';
+import { GoalsProvider } from './GoalsContext';
 import HomeScreen from './Screens/HomeScreen';
 import PlaidLoginScreen from './Screens/PlaidLoginScreen';
+import GoalsnTrends from './Screens/GoalsnTrends';
 import { RootStackParamList } from './RootStack';
 
 >>>>>>> 0e0549a (Plaid Login Screen and Local server to get the keys for the API. Plaid login is still not fully functional but the screen does not break anything)
@@ -96,6 +98,7 @@ const Stack = createStackNavigator();
 <<<<<<< HEAD
 const Stack = createStackNavigator();
 
+<<<<<<< HEAD
 =======
 >>>>>>> 5ab57a2 (Initial commit)
 function App(): React.JSX.Element {
@@ -141,13 +144,23 @@ function App(): React.JSX.Element {
 >>>>>>> 5ab57a2 (Initial commit)
     </SafeAreaView>
 =======
+=======
+function App(): React.JSX.Element  {
+  return (
+    <GoalsProvider>
+>>>>>>> 5ca7f60 (GoalsContext that overarchs everything for now and the GoalsnTrends screen that is fully functional with the given set up of the code.)
       <NavigationContainer>
-            <Stack.Navigator initialRouteName="Home Screen">
+            <Stack.Navigator initialRouteName="HomeScreen">
             <Stack.Screen name = "HomeScreen" component={HomeScreen}/>
             <Stack.Screen name = "PlaidLoginScreen" component={PlaidLoginScreen} />
+            <Stack.Screen name = "GoalsnTrends" component={GoalsnTrends} />
             </Stack.Navigator>  
       </NavigationContainer>
+<<<<<<< HEAD
 >>>>>>> 0e0549a (Plaid Login Screen and Local server to get the keys for the API. Plaid login is still not fully functional but the screen does not break anything)
+=======
+      </GoalsProvider>
+>>>>>>> 5ca7f60 (GoalsContext that overarchs everything for now and the GoalsnTrends screen that is fully functional with the given set up of the code.)
   );
 }
 
