@@ -6,7 +6,7 @@ import HomeScreen from './Screens/HomeScreen';
 import LoginScreen from './Screens/LoginScreen'
 import SignupScreen from './Screens/SignupScreen'
 import PlaidLoginScreen from './Screens/PlaidLoginScreen';
-import GoalsnTrends from './Screens/Goals';
+import Goals from './Screens/Goals';
 
 
 const Stack = createStackNavigator();
@@ -20,7 +20,7 @@ function App(): React.JSX.Element  {
             <Stack.Screen name = "SignupScreen" component={SignupScreen}/>
             <Stack.Screen name = "HomeScreen" component={HomeScreen}/>
             <Stack.Screen name = "PlaidLoginScreen" component={PlaidLoginScreen} />
-            <Stack.Screen name = "GoalsnTrends" component={GoalsnTrends} />
+            <Stack.Screen name = "Goals" component={Goals} />
             </Stack.Navigator>  
       </NavigationContainer>
       </GoalsProvider>

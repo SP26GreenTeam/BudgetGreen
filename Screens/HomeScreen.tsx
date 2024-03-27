@@ -52,10 +52,11 @@ const HomeScreen: React.FC<Props> = ({navigation}) => {
           items={[
             { label: 'Home', value:'HomeScreen'},
             { label: 'Plaid Login', value:'PlaidLoginScreen'},
-            { label: 'Goals and Trends', value:'Goals'},
+            { label: 'Goals', value:'Goals'},
             // Add more menu items as needed
           ]}
           value={selectedValue}
+          placeholder={{}}
           style={{
             inputIOS: {
               fontSize: 16,
