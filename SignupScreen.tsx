@@ -37,12 +37,10 @@ export default function App() {
         onChangeText={(val) => setWord(val)}
         secureTextEntry={true} // Password input will appear as *****
       />
-      <View style={styles.buttonContainer}>
-        <Button
+      <Button
           title="SignUp"
           onPress={() => Alert.alert('You have reached the signup page')}
-        />
-      </View>
+      />
     </ScrollView>
   );
 }
@@ -51,7 +49,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 32,
     fontWeight: 'bold',
-    marginBottom: 10,
+    marginBottom: 5,
   },
   container: {
     flex: 1,
@@ -70,7 +68,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: 500,
-    height: 400,
+    height: 300,
     marginBottom: 10
   },
   buttonContainer: {
