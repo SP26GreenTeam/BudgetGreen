@@ -1,57 +1,23 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
-import React from 'react';
-=======
-import React, { useState, useCallback, useEffect } from 'react';
->>>>>>> 0e0549a (Plaid Login Screen and Local server to get the keys for the API. Plaid login is still not fully functional but the screen does not break anything)
-=======
 import React, { useState,  useEffect } from 'react';
->>>>>>> 5ca7f60 (GoalsContext that overarchs everything for now and the GoalsnTrends screen that is fully functional with the given set up of the code.)
 import { View, Text, StyleSheet, Button } from 'react-native';
 import type {PropsWithChildren} from 'react';
 import RNPickerSelect from 'react-native-picker-select';
 import { StackNavigationProp } from '@react-navigation/stack';
-<<<<<<< HEAD
-=======
 import { RootStackParamList } from '../RootStack';
 import { useIsFocused } from '@react-navigation/native';
-<<<<<<< HEAD
->>>>>>> 0e0549a (Plaid Login Screen and Local server to get the keys for the API. Plaid login is still not fully functional but the screen does not break anything)
-=======
 import { useGoals } from '../GoalsContext';
 
->>>>>>> 5ca7f60 (GoalsContext that overarchs everything for now and the GoalsnTrends screen that is fully functional with the given set up of the code.)
 
 type SectionProps = PropsWithChildren<{
   title: string;
 }>;
 
-<<<<<<< HEAD
-type RootStackParamList = {
-  Home: undefined; 
-};
-
-type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>;
-=======
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'HomeScreen'>;
->>>>>>> 0e0549a (Plaid Login Screen and Local server to get the keys for the API. Plaid login is still not fully functional but the screen does not break anything)
 
 type Props = {
   navigation: HomeScreenNavigationProp;
 };
 
-<<<<<<< HEAD
-const HomeScreen = ({ navigation } : Props) => {
-  return (
-    <View style={styles.outerContainer}>
-    <RNPickerSelect
-          onValueChange={(value) => console.log(value)}
-          items={[
-            { label: 'Menu Item 1', value: 'menuItem1' },
-            { label: 'Menu Item 2', value: 'menuItem2' },
-            // Add more menu items as needed
-          ]}
-=======
 
 const HomeScreen: React.FC<Props> = ({navigation}) => {
   const { goals } = useGoals();
@@ -66,7 +32,7 @@ const HomeScreen: React.FC<Props> = ({navigation}) => {
     }
   }, [isFocused]);
 
-  const [selectedValue, setSelectedValue] = useState<'HomeScreen' | 'PlaidLoginScreen' | 'GoalsnTrends'>('HomeScreen');
+  const [selectedValue, setSelectedValue] = useState<'HomeScreen' | 'PlaidLoginScreen' | 'Goals' | 'LoginScreen' | 'SignupScreen'>('HomeScreen');
 
   const handleItemSelected = (value: keyof RootStackParamList) => {
     console.log(`Navigating to ${value}`);
@@ -86,11 +52,10 @@ const HomeScreen: React.FC<Props> = ({navigation}) => {
           items={[
             { label: 'Home', value:'HomeScreen'},
             { label: 'Plaid Login', value:'PlaidLoginScreen'},
-            { label: 'Goals and Trends', value:'GoalsnTrends'},
+            { label: 'Goals and Trends', value:'Goals'},
             // Add more menu items as needed
           ]}
           value={selectedValue}
->>>>>>> 0e0549a (Plaid Login Screen and Local server to get the keys for the API. Plaid login is still not fully functional but the screen does not break anything)
           style={{
             inputIOS: {
               fontSize: 16,

@@ -1,20 +1,28 @@
 import React, { useState } from 'react';
 import type { PropsWithChildren } from 'react';
 import { Button, View, Text, StyleSheet, TextInput, Alert, Image, ScrollView } from 'react-native';
+import { RootStackParamList } from '../RootStack';
+import { StackNavigationProp } from '@react-navigation/stack';
 
 type SectionProps = PropsWithChildren<{
   title: string;
 }>;
 
-export default function App() {
+type SignupScreenNavigationProp = StackNavigationProp<RootStackParamList, 'SignupScreen'>;
+
+type Props = {
+  navigation: SignupScreenNavigationProp;
+};
+
+const App: React.FC<Props> = ({ navigation }) => {
   const [username, setName] = useState('UserName: ');
   const [password, setWord] = useState('Password: ');
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>JustBudget</Text>
+      <Text style={styles.title}>Sign-up Sheet</Text>
       <Image 
-        source={require('./images/f4efbac0-152c-11ee-93fd-3494f51ee4a0.jpg')}
+        source={require('./images/depositphotos_136992572-stock-illustration-application-form-icon.jpg')}
         style ={styles.image}
       />
       <Text>Enter Email:</Text>
@@ -30,16 +38,17 @@ export default function App() {
         onChangeText={(val) => setWord(val)}
         secureTextEntry={true} // Password input will appear as *****
       />
-      <View style={styles.buttonContainer}>
-        <Button
-          title="Login"
-          onPress={() => Alert.alert('You have logged in')}
-        />
-        <Button
+      <Text>Confirm Password:</Text>
+      <TextInput
+        style={styles.input}
+        placeholder='Confirm Password'
+        onChangeText={(val) => setWord(val)}
+        secureTextEntry={true} // Password input will appear as *****
+      />
+      <Button
           title="SignUp"
-          onPress={() => Alert.alert('You have reached the signup page')}
-        />
-      </View>
+          onPress={() => navigation.navigate('HomeScreen')}
+      />
     </ScrollView>
   );
 }
@@ -48,7 +57,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 32,
     fontWeight: 'bold',
-    marginBottom: 10,
+    marginBottom: 5,
   },
   container: {
     flex: 1,
@@ -67,7 +76,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: 500,
-    height: 500,
+    height: 300,
     marginBottom: 10
   },
   buttonContainer: {
@@ -77,3 +86,5 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
 });
+
+export default App;

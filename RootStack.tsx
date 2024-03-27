@@ -1,5 +1,7 @@
 export type RootStackParamList = {
     HomeScreen: undefined;
     PlaidLoginScreen: undefined;
-    GoalsnTrends: undefined;
+    Goals: undefined;
+    SignupScreen: undefined;
+    LoginScreen: undefined;
   };
