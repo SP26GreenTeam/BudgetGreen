@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useCallback} from 'react';
-import { View, Text, Button, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, Text, Button, TouchableOpacity, ActivityIndicator, StyleSheet } from 'react-native';
 import axios from "axios";
-import { usePlaidLink,
-  PlaidLinkOnSuccess,} from "react-plaid-link";
+import PlaidLinkButton from './PlaidLinkButton';
+
 
 
 axios.defaults.baseURL ="http://10.0.2.2:8080"
@@ -10,6 +10,8 @@ axios.defaults.baseURL ="http://10.0.2.2:8080"
 interface PlaidAuthProps {
   publicToken: string; // Specify the type of publicToken as string
 }
+
+
 
 function PlaidAuth({publicToken}: PlaidAuthProps) {
   const [account, setAccount] = useState();
@@ -36,6 +38,7 @@ function PlaidLoginScreen() {
   const [linkToken, setLinkToken] = useState<string | null>(null);
   const [isLinkTokenReady, setIsLinkTokenReady] = useState(false);
   const [publicToken, setPublicToken] = useState<string | null>(null);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     async function fetch() {
@@ -43,6 +46,7 @@ function PlaidLoginScreen() {
         const response = await axios.post("/create_link_token");
         setLinkToken(response.data.link_token);
         setIsLinkTokenReady(true);
+        console.log('Link token fetched:', response.data.link_token);
       } catch (error) {
         console.error("Error fetching link token:", error);
         setIsLinkTokenReady(false);
@@ -51,33 +55,21 @@ function PlaidLoginScreen() {
     fetch();
   }, []);
 
-
-  const onSuccess = useCallback<PlaidLinkOnSuccess>((publicToken, metadata) => {
-    // send public_token to your server
-    // https://plaid.com/docs/api/tokens/#token-exchange-flow
-    console.log(publicToken, metadata);
-  }, []);
-
-
-
-  const { open, ready, } = usePlaidLink({
-    token: linkToken,
-    onSuccess,
-  });
-
-  if (!isLinkTokenReady || !ready) {
-    console.log("DOES LINK TOKEN EXIST???", linkToken);
-    console.log("STATE OF THE READY??", ready);
-    // This will show an activity indicator until both the link token is fetched and Plaid Link is ready.
-    return <ActivityIndicator size="large" />;
-  }
-
   return (
     <View style={styles.container}>
-      <Button onPress={() => open()} title="Connect a bank account" disabled={!ready} />
+      {publicToken ? (
+        // Step 3: Once we have the publicToken, show the PlaidAuth component
+        <PlaidAuth publicToken={publicToken} />
+      ) : linkToken && isLinkTokenReady ? (
+        // Step 2: Link token is ready, show PlaidLinkButton
+        <PlaidLinkButton token={linkToken} onExit={() => setReady(false)} onSuccess={(token:string) => setPublicToken(token)} />
+      ) : (
+        // Step 1: Waiting for the linkToken to be ready, show a loading button or indicator
+        <ActivityIndicator size="large" color="#0000ff" /> // Or a disabled Button with "Loading..."
+      )}
     </View>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   app: {
@@ -113,6 +105,20 @@ const styles = StyleSheet.create({
   errorText: {
     color: 'red',
     textAlign: 'center',
+  },
+  button: {
+    backgroundColor: 'blue', // Example style
+    padding: 10,
+    borderRadius: 5,
+  },
+  buttonText: {
+    color: 'white', // Example style
+    textAlign: 'center',
+  },
+  buttonDisabled: {
+    backgroundColor: 'grey', // Example style for disabled state
+    padding: 10,
+    borderRadius: 5,
   },
 });
 
