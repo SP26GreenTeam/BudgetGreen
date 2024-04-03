@@ -1,33 +1,62 @@
-import React from 'react';
+import React, { useState,  useEffect } from 'react';
 import { View, Text, StyleSheet, Button } from 'react-native';
 import type {PropsWithChildren} from 'react';
 import RNPickerSelect from 'react-native-picker-select';
 import { StackNavigationProp } from '@react-navigation/stack';
+import { RootStackParamList } from '../RootStack';
+import { useIsFocused } from '@react-navigation/native';
+import { useGoals } from '../GoalsContext';
+
 
 type SectionProps = PropsWithChildren<{
   title: string;
 }>;
 
-type RootStackParamList = {
-  Home: undefined; 
-};
-
-type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>;
+type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'HomeScreen'>;
 
 type Props = {
   navigation: HomeScreenNavigationProp;
 };
 
-const HomeScreen = ({ navigation } : Props) => {
+
+const HomeScreen: React.FC<Props> = ({navigation}) => {
+  const { goals } = useGoals();
+  const highestPriorityGoal = goals.sort((a, b) => a.priority - b.priority)[0] || null;
+  const isFocused = useIsFocused();
+
+  useEffect(() => {
+    if (isFocused) {
+      // Reset selection only when the screen is focused again,
+      // indicating the user has returned from the PlaidLoginScreen
+      setSelectedValue('HomeScreen');
+    }
+  }, [isFocused]);
+
+  const [selectedValue, setSelectedValue] = useState<'HomeScreen' | 'PlaidLoginScreen' | 'Goals' | 'LoginScreen' | 'SignupScreen'>('HomeScreen');
+
+  const handleItemSelected = (value: keyof RootStackParamList) => {
+    console.log(`Navigating to ${value}`);
+    // Consider setting the selected value only if necessary,
+    // or managing navigation state more explicitly
+    if (value !== selectedValue) {
+      setSelectedValue(value);
+    }
+    navigation.navigate(value);
+  };
+  console.log(navigation);
+  
   return (
     <View style={styles.outerContainer}>
     <RNPickerSelect
-          onValueChange={(value) => console.log(value)}
+          onValueChange={(value) => handleItemSelected(value)}
           items={[
-            { label: 'Menu Item 1', value: 'menuItem1' },
-            { label: 'Menu Item 2', value: 'menuItem2' },
+            { label: 'Home', value:'HomeScreen'},
+            { label: 'Plaid Login', value:'PlaidLoginScreen'},
+            { label: 'Goals', value:'Goals'},
             // Add more menu items as needed
           ]}
+          value={selectedValue}
+          placeholder={{}}
           style={{
             inputIOS: {
               fontSize: 16,
@@ -67,6 +96,13 @@ const HomeScreen = ({ navigation } : Props) => {
             <Text>$750.00</Text>
           </View>
         </View>
+        {highestPriorityGoal && (
+          <View style={styles.fullWidthSection}>
+            <Text style={styles.sectionTitle}>Top Priority Goal</Text>
+            <Text>{highestPriorityGoal.title} - ${highestPriorityGoal.amount.toFixed(2)}</Text>
+            <Text>Priority Level: {highestPriorityGoal.priority}</Text>
+          </View>
+        )}
       </View>
     </View>
   );
@@ -83,6 +119,11 @@ const styles = StyleSheet.create({
     top: 10, 
     left: 10, 
     zIndex: 10, 
+  },
+  fullWidthSection: {
+    width: '100%', 
+    alignItems: 'center', 
+    marginBottom: 10,
   },
   container: {
     flex: 1,

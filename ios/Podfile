@@ -25,7 +25,11 @@ if linkage != nil
   use_frameworks! :linkage => linkage.to_sym
 end
 
+<<<<<<< HEAD
 target 'AwesomeProject' do
+=======
+target 'JustABudgetApp' do
+>>>>>>> 5ab57a2 (Initial commit)
   config = use_native_modules!
 
   use_react_native!(
@@ -39,7 +43,11 @@ target 'AwesomeProject' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
+<<<<<<< HEAD
   target 'AwesomeProjectTests' do
+=======
+  target 'JustABudgetAppTests' do
+>>>>>>> 5ab57a2 (Initial commit)
     inherit! :complete
     # Pods for testing
   end
