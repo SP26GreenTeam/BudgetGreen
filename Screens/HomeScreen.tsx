@@ -1,16 +1,12 @@
-import React, { useState,  useEffect } from 'react';
-import { View, Text, StyleSheet, Button } from 'react-native';
-import type {PropsWithChildren} from 'react';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import type { PropsWithChildren } from 'react';
 import RNPickerSelect from 'react-native-picker-select';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../RootStack';
 import { useIsFocused } from '@react-navigation/native';
 import { useGoals } from '../GoalsContext';
-
-
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
+import { usePlaidData } from './PlaidDataProvider';
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'HomeScreen'>;
 
@@ -18,16 +14,14 @@ type Props = {
   navigation: HomeScreenNavigationProp;
 };
 
-
-const HomeScreen: React.FC<Props> = ({navigation}) => {
+const HomeScreen: React.FC<Props> = ({ navigation }) => {
+  const { data } = usePlaidData();
   const { goals } = useGoals();
   const highestPriorityGoal = goals.sort((a, b) => a.priority - b.priority)[0] || null;
   const isFocused = useIsFocused();
 
   useEffect(() => {
     if (isFocused) {
-      // Reset selection only when the screen is focused again,
-      // indicating the user has returned from the PlaidLoginScreen
       setSelectedValue('HomeScreen');
     }
   }, [isFocused]);
@@ -36,65 +30,35 @@ const HomeScreen: React.FC<Props> = ({navigation}) => {
 
   const handleItemSelected = (value: keyof RootStackParamList) => {
     console.log(`Navigating to ${value}`);
-    // Consider setting the selected value only if necessary,
-    // or managing navigation state more explicitly
     if (value !== selectedValue) {
       setSelectedValue(value);
     }
     navigation.navigate(value);
   };
-  console.log(navigation);
-  
+
   return (
-    <View style={styles.outerContainer}>
-    <RNPickerSelect
-          onValueChange={(value) => handleItemSelected(value)}
-          items={[
-            { label: 'Home', value:'HomeScreen'},
-            { label: 'Plaid Login', value:'PlaidLoginScreen'},
-            { label: 'Goals', value:'Goals'},
-            // Add more menu items as needed
-          ]}
-          value={selectedValue}
-          placeholder={{}}
-          style={{
-            inputIOS: {
-              fontSize: 16,
-              paddingVertical: 12,
-              paddingHorizontal: 10,
-              borderWidth: 1,
-              borderColor: 'gray',
-              borderRadius: 4,
-              color: 'black',
-              paddingRight: 30, 
-            },
-            inputAndroid: {
-              fontSize: 16,
-              paddingHorizontal: 10,
-              paddingVertical: 8,
-              borderWidth: 0.5,
-              borderColor: 'purple',
-              borderRadius: 8,
-              color: 'black',
-              paddingRight: 30, 
-            },
-          }}
-        />
+    <ScrollView style={styles.outerContainer}>
+      <RNPickerSelect
+        onValueChange={(value) => handleItemSelected(value)}
+        items={[
+          { label: 'Home', value: 'HomeScreen' },
+          { label: 'Plaid Login', value: 'PlaidLoginScreen' },
+          { label: 'Goals', value: 'Goals' },
+          // Add more menu items as needed
+        ]}
+        value={selectedValue}
+        placeholder={{}}
+        style={{
+          inputIOS: styles.inputIOS,
+          inputAndroid: styles.inputAndroid,
+        }}
+      />
       <View style={styles.container}>
         <Text style={styles.title}>Budget Overview</Text>
+        {/* Display Current Balance */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Current Balance</Text>
-          <Text style={styles.balance}>$1,250.00</Text>
-        </View>
-        <View style={styles.sectionRow}>
-          <View style={styles.halfSection}>
-            <Text style={styles.sectionTitle}>Income</Text>
-            <Text>$2,000.00</Text>
-          </View>
-          <View style={styles.halfSection}>
-            <Text style={styles.sectionTitle}>Expenses</Text>
-            <Text>$750.00</Text>
-          </View>
+          <Text style={styles.balance}>${data?.balance.toFixed(2)}</Text> 
         </View>
         {highestPriorityGoal && (
           <View style={styles.fullWidthSection}>
@@ -103,8 +67,11 @@ const HomeScreen: React.FC<Props> = ({navigation}) => {
             <Text>Priority Level: {highestPriorityGoal.priority}</Text>
           </View>
         )}
+        <View style={styles.fullWidthSection}>
+          <Text style={styles.sectionTitle}>Recent Transactions:</Text>
+        </View>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 
@@ -161,6 +128,31 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: 'bold',
     color: '#4CE205',
+  },
+  inputIOS: {
+    fontSize: 16,
+    paddingVertical: 12,
+    paddingHorizontal: 10,
+    borderWidth: 1,
+    borderColor: 'gray',
+    borderRadius: 4,
+    color: 'black',
+    paddingRight: 30, 
+  },
+  inputAndroid: {
+    fontSize: 16,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    borderWidth: 0.5,
+    borderColor: 'purple',
+    borderRadius: 8,
+    color: 'black',
+    paddingRight: 30, 
+  },
+  transactionItem: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#cccccc',
   },
 });
 

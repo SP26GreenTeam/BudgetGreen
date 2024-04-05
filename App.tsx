@@ -7,6 +7,7 @@ import LoginScreen from './Screens/LoginScreen'
 import SignupScreen from './Screens/SignupScreen'
 import PlaidLoginScreen from './Screens/PlaidLoginScreen';
 import Goals from './Screens/Goals';
+import { PlaidDataProvider, usePlaidData } from './Screens/PlaidDataProvider';
 
 
 const Stack = createStackNavigator();
@@ -15,6 +16,7 @@ function App(): React.JSX.Element  {
   return (
     <GoalsProvider>
       <NavigationContainer>
+        <PlaidDataProvider>
             <Stack.Navigator initialRouteName="LoginScreen">
             <Stack.Screen name = "LoginScreen" component={LoginScreen}/>
             <Stack.Screen name = "SignupScreen" component={SignupScreen}/>
@@ -22,6 +24,7 @@ function App(): React.JSX.Element  {
             <Stack.Screen name = "PlaidLoginScreen" component={PlaidLoginScreen}/>
             <Stack.Screen name = "Goals" component={Goals} />
             </Stack.Navigator>  
+            </PlaidDataProvider>
       </NavigationContainer>
       </GoalsProvider>
   );

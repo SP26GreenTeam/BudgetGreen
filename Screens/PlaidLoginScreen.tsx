@@ -1,9 +1,10 @@
 import React, { useEffect, useState, useCallback} from 'react';
-import { View, Platform, NativeModules, ActivityIndicator, StyleSheet, Text, NativeEventEmitter } from 'react-native';
+import { View, Platform, NativeModules, ActivityIndicator, StyleSheet, Text, NativeEventEmitter, TouchableOpacity } from 'react-native';
 import axios from "axios";
 import { LinkTokenConfiguration, LinkOpenProps, LinkSuccess, LinkExit, LinkIOSPresentationStyle, LinkLogLevel, LinkError, LinkEventListener } from 'react-native-plaid-link-sdk';
 import PlaidLinkButton from './PlaidLinkButton';
-
+import { usePlaidData } from './PlaidDataProvider';
+import {Account, PlaidResponse, AccountBalance } from '../types/interfaces';
 
 axios.defaults.baseURL ="http://10.0.2.2:8080"
 
@@ -104,55 +105,112 @@ function createLinkTokenConfiguration(
   };
 }
 
-function createLinkOpenProps(): LinkOpenProps {
+function createLinkOpenProps(setPublicToken: (token: string) => void): LinkOpenProps {
   return {
     onSuccess: (success: LinkSuccess) => {
-      // User was able to successfully link their account.
       console.log('Success: ', success);
+      setPublicToken(success.publicToken); // Use the actual property that holds the public token
     },
     onExit: (linkExit: LinkExit) => {
-      // User exited Link session. There may or may not be an error depending on what occured.
       console.log('Exit: ', linkExit);
       dismissLink();
     },
-    // MODAL or FULL_SCREEEN presentation on iOS. Defaults to MODAL.
     iOSPresentationStyle: LinkIOSPresentationStyle.MODAL,
     logLevel: LinkLogLevel.ERROR,
   };
 }
 
+/*
+const createUser = async () => {
+  try {
+      const response = await axios.post('/user/create', { client_user_id: 'custom_reese1' });
+      console.log('User Created:', response.data);
+      // Store the user_token and user_id as needed
+      const { user_token, user_id } = response.data;
+      
+      // Example: Storing in local state or sending to another function/component
+      // setState({ userToken: user_token, userId: user_id });
 
-function PlaidAuth({publicToken}: PlaidAuthProps) {
-  const [account, setAccount] = useState();
+      return { user_token, user_id }; // Returning the tokens for further use
+  } catch (error) {
+      console.error('Failed to create user:', error);
+      throw error; // Rethrow or handle error as needed
+  }
+};
+*/
+
+export const useFetchPlaidData = (publicToken: string | null,
+  userToken: string | null,
+  setUserToken: React.Dispatch<React.SetStateAction<string | null>>) => {
+
+  console.log('useFetchPlaidData called with publicToken:', publicToken);
+  const { setData } = usePlaidData();
 
   useEffect(() => {
     async function fetchData() {
-      let accessToken = await axios.post("/exchange_public_token", {public_token: publicToken});
-      console.log("accessToken", accessToken.data);
-      const auth = await axios.post("/auth", {access_token: accessToken.data.accessToken});
-      console.log("auth data ", auth.data);
-      setAccount(auth.data.numbers.ach[0]);
-    }
-    fetchData();
-  }, []);
-  return account && (
-      <>
-      </>
-  );
-}
+      if (publicToken == null) return;
+      try {
+     
+        const accessTokenResponse = await axios.post("/item/public_token/exchange", { public_token: publicToken });
+        const { accessToken } = accessTokenResponse.data;
+        console.log("access token", accessToken);
 
+        const balanceInfoResponse = await axios.post("/accounts/balance/get", { accessToken: accessToken });
+        console.log(balanceInfoResponse.data);
+        const accounts = balanceInfoResponse.data; // Directly accessing the data since it's the array
+
+        // Now, filter for "checking" subtype accounts and sum their current balances
+        let totalCurrentBalance = accounts
+          .filter((account: Account) => account.subtype === 'checking') 
+          .reduce((sum: number, account: Account) => sum + account.balances.current, 0); 
+        /*
+        const transactionsResponse = await axios.post("/transactions/get", {
+          accessToken: accessToken,
+          start_date: "2024-01-01",
+          end_date: "2024-02-01"
+        });      
+
+        if (transactionsResponse.status === 202) {
+            console.log("too early on the call.")
+         } else {
+          // Handle the successful response
+         console.log(transactionsResponse.data);
+         }
+         */
+       
+        /*
+        const transactions = transactionsResponse.data.transactions || [];
+        
+        console.log(transactionsResponse.data);
+        */
+      
+
+        console.log({ balance: totalCurrentBalance });
+
+        setData({
+          balance: totalCurrentBalance,
+        });
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        // Handle the error state appropriately
+      }
+    }
+
+    fetchData();
+  }, [publicToken, setData, userToken, setUserToken]);
+};
 
 function PlaidLoginScreen() {
-
+  const [userToken, setUserToken] = useState<string | null>(null);
   const [linkToken, setLinkToken] = useState<string | null>(null);
   const [publicToken, setPublicToken] = useState<string | null>(null);
 
   useEffect(() => {
-    async function fetch() {
+    async function fetchLinkToken() {
       try {
         const response = await axios.post("/create_link_token");
         if (response.data.link_token) {
-          setLinkToken(response.data.link_token);         
+          setLinkToken(response.data.link_token);
           const tokenConfiguration = createLinkTokenConfiguration(response.data.link_token);
           create(tokenConfiguration);
         } else {
@@ -162,26 +220,30 @@ function PlaidLoginScreen() {
         console.error("Error fetching link token:", error);
       }
     }
-    fetch();
+    fetchLinkToken();
   }, []);
 
-  const openProps = createLinkOpenProps();
+  const openProps = createLinkOpenProps(setPublicToken);
+
+  useFetchPlaidData(publicToken, userToken, setUserToken);
 
   return (
     <View style={styles.container}>
       {publicToken ? (
-        // Display your component or UI for after successful link
         <Text>Bank account linked successfully!</Text>
       ) : linkToken ? (
-        <PlaidLinkButton
-          onPress={() => open(openProps)}
-        />
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity onPress={() => open(openProps)} style={styles.button}>
+         <Text style={styles.buttonText}>Connect to Plaid</Text>
+         </TouchableOpacity>
+  </View>
       ) : (
         <ActivityIndicator size="large" color="#0000ff" />
       )}
     </View>
   );
-};
+}
+
 
 const styles = StyleSheet.create({
   app: {
@@ -219,12 +281,23 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   button: {
-    backgroundColor: 'blue', // Example style
-    padding: 10,
-    borderRadius: 5,
+    backgroundColor: '#4CAF50', // A more vibrant color
+    paddingVertical: 15, // Make the button taller
+    paddingHorizontal: 20, // Button wider
+    borderRadius: 25, // Rounded corners
+    shadowColor: '#000', // Shadow for more depth
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   buttonText: {
-    color: 'white', // Example style
+    color: 'white', // Ensure text is easily readable
+    fontWeight: 'bold', // Make text bold
+    fontSize: 18, // Larger text
     textAlign: 'center',
   },
   buttonDisabled: {
