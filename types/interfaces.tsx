@@ -16,6 +16,7 @@ export interface ResponseData{
   export interface PlaidData {
     balance: number; // Assuming you sum up balances
     //transactions: Transaction[]; // Ensure you define a Transaction interface
+    BankIncome: number;
   }
   
   export interface Transaction {

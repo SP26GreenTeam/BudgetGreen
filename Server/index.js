@@ -25,10 +25,15 @@ app.post('/create_link_token', async function (request, response) {
             client_user_id: 'user',
         },
         client_name: 'Plaid Test App',
-        products: ['auth', 'transactions'],
-        transactions: {
-            days_requested: 730
+        products: ['auth', 'income_verification'],
+        user_token: 'user-sandbox-4a677ca0-4c48-43e1-b68c-5ee29ca50e66',
+        income_verification: {
+            income_source_types: ["bank"],
+            bank_income: { 
+                days_requested: 60 
+            }, 
         },
+        
         language: 'en',
         redirect_uri: 'http://localhost:5173/',
         country_codes: ['US'],
@@ -48,14 +53,9 @@ app.post("/accounts/balance/get", async function(req, res) {
         const response = await plaidClient.accountsBalanceGet({
             access_token: accessToken,
         });
-        
-        // Log the entire response from Plaid to inspect its structure
-        console.log("Plaid response:", JSON.stringify(response.data, null, 2));
 
         const accounts = response.data.accounts;
-        // Optionally, log just the accounts part if that's what you're interested in
-        console.log("Accounts data:", JSON.stringify(accounts, null, 2));
-
+    
         res.json(accounts); // Send accounts back to the client
     } catch (error) {
         console.error("Error fetching account balances:", error);
@@ -63,6 +63,20 @@ app.post("/accounts/balance/get", async function(req, res) {
     }
 });
 
+app.post("/get_bank_income", async (req, res, next) => {
+    try {
+      const response = await plaidClient.creditBankIncomeGet({
+        user_token: 'user-sandbox-4a677ca0-4c48-43e1-b68c-5ee29ca50e66',
+        options: {
+          count: 1,
+        },
+      });
+      console.log("Plaid response:", JSON.stringify(response.data, null, 2));
+      res.json(response.data);
+    } catch (error) {
+      next(error);
+    }
+  });
 
 /*
 app.post("/user/create", async (req, res) => {

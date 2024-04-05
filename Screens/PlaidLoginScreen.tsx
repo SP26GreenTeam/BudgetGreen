@@ -163,6 +163,14 @@ export const useFetchPlaidData = (publicToken: string | null,
         let totalCurrentBalance = accounts
           .filter((account: Account) => account.subtype === 'checking') 
           .reduce((sum: number, account: Account) => sum + account.balances.current, 0); 
+
+          const bankIncomeResponse = await axios.post("/get_bank_income", { accessToken: accessToken });
+          const bankIncomeData = bankIncomeResponse.data.bank_income[0]; // Adjust based on your actual data structure
+
+          const latestIncomeSummary = bankIncomeData.items[0].bank_income_sources[0].historical_summary.slice(-1)[0];
+          const monthlyIncomeAmount = latestIncomeSummary.total_amount;
+          console.log("Monthly Income Amount:", monthlyIncomeAmount);
+
         /*
         const transactionsResponse = await axios.post("/transactions/get", {
           accessToken: accessToken,
@@ -185,10 +193,11 @@ export const useFetchPlaidData = (publicToken: string | null,
         */
       
 
-        console.log({ balance: totalCurrentBalance });
+        console.log({ balance: totalCurrentBalance, bankIncomeData });
 
         setData({
           balance: totalCurrentBalance,
+          BankIncome: monthlyIncomeAmount,
         });
       } catch (error) {
         console.error("Error fetching data:", error);

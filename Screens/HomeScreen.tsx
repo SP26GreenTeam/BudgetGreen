@@ -60,6 +60,11 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
           <Text style={styles.sectionTitle}>Current Balance</Text>
           <Text style={styles.balance}>${data?.balance.toFixed(2)}</Text> 
         </View>
+        {/* Display Monthly Income */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Monthly Income</Text>
+          <Text style={styles.balance}>${data?.BankIncome?.toFixed(2)}</Text>
+        </View>
         {highestPriorityGoal && (
           <View style={styles.fullWidthSection}>
             <Text style={styles.sectionTitle}>Top Priority Goal</Text>
