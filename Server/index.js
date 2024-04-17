@@ -8,7 +8,7 @@ const configuration = new Configuration({
     baseOptions: {
         headers: {
             'PLAID-CLIENT-ID': '65fa0ee42396a5001df1b103',
-            'PLAID-SECRET': '40ba2993a0a84186e4fb2e594031e4',
+            'PLAID-SECRET': '',
         },
     },
 });
@@ -25,7 +25,7 @@ app.post('/create_link_token', async function (request, response) {
             client_user_id: 'user',
         },
         client_name: 'Plaid Test App',
-        products: ['auth', 'income_verification'],
+        products: ['auth', 'income_verification', 'transactions'],
         user_token: 'user-sandbox-4a677ca0-4c48-43e1-b68c-5ee29ca50e66',
         income_verification: {
             income_source_types: ["bank"],
@@ -33,7 +33,10 @@ app.post('/create_link_token', async function (request, response) {
                 days_requested: 60 
             }, 
         },
-        
+        transactions: {
+            days_requested: 200
+        },
+        webhook: 'https://a2ab-2601-c2-8301-de00-8094-d1a8-ff0e-2090.ngrok.io',
         language: 'en',
         redirect_uri: 'http://localhost:5173/',
         country_codes: ['US'],
@@ -102,20 +105,11 @@ app.post("/user/create", async (req, res) => {
 });
 */
 
-/*
-app.post("/transactions/sync", async (req, res) => {
-    const { accessToken, itemId } = req.body;
+const syncTransactions = async () => {
+    // Placeholder: Replace with actual access token retrieval logic
+    const accessToken = accessToken; 
 
-    // Check if item is ready for transaction sync
-    const isReady = await checkIfItemReady(itemId);
-    if (!isReady) {
-        return res.status(202).json({ message: "Data not ready yet." });
-    }
-
-    // Retrieve the latest cursor for this item, if it exists
-    let cursor = await database.getLatestCursorOrNull(itemId);
-
-    // Prepare to accumulate transaction updates
+    let cursor; // Placeholder: Replace with actual logic to retrieve the cursor, if available
     let added = [];
     let modified = [];
     let removed = [];
@@ -126,7 +120,7 @@ app.post("/transactions/sync", async (req, res) => {
         try {
             const response = await plaidClient.transactionsSync({
                 access_token: accessToken,
-                cursor: cursor,
+                cursor: cursor, // The initial cursor is undefined or null
             });
 
             // Accumulate transaction updates
@@ -140,47 +134,15 @@ app.post("/transactions/sync", async (req, res) => {
 
         } catch (error) {
             console.error("Error fetching transactions:", error);
-            return res.status(500).json({ error: "Failed to fetch transactions" });
+            return; // Handle the error as needed
         }
     }
 
-    // Apply updates to the database
-    await database.applyUpdates(itemId, added, modified, removed, cursor);
+    // Apply updates to the database or other storage
+    // Placeholder: Replace with actual logic to apply the updates
+    console.log('Synced transactions:', { added, modified, removed });
+};
 
-    // Respond with the accumulated transaction updates
-    res.json({ added, modified, removed });
-});
-    };
-
-    try {
-        // First request to get initial transactions data
-        let response = await plaidClient.transactionsGet(initialRequest);
-        let transactions = response.data.transactions;
-        const total_transactions = response.data.total_transactions;
-
-        // Loop to fetch additional transactions pages if there are more transactions than initially fetched
-        while (transactions.length < total_transactions) {
-            const paginatedRequest = {
-                access_token: accessToken,
-                start_date: start_date || '2018-01-01', // Reuse or default
-                end_date: end_date || '2020-02-01',   // Reuse or default
-                options: {
-                    offset: transactions.length, // Update offset to fetch next page of transactions
-                },
-            };
-
-            response = await plaidClient.transactionsGet(paginatedRequest);
-            transactions = transactions.concat(response.data.transactions);
-        }
-
-        // Respond with the aggregated transactions data
-        res.json({ transactions, total_transactions });
-    } catch (error) {
-        console.error("Error fetching transactions:", error);
-        res.status(500).json({ error: "Failed to fetch transactions" });
-    }
-});
- */
 
 app.post("/auth", async function(request, response) {
    try {
@@ -215,16 +177,18 @@ app.post('/item/public_token/exchange', async function (req, res, next) {
 });
 
 
-app.post('/plaid/webhook', async (req, res) => {
+app.post('/plaid_webhook', async (req, res) => {
     const { webhook_type, webhook_code, item_id, new_transactions } = req.body;
 
-    if (webhook_type === 'TRANSACTIONS' && webhook_code === 'INITIAL_UPDATE') {
-        console.log(`Received INITIAL_UPDATE for item_id: ${item_id} with ${new_transactions} new transactions.`);
-        // Here, you would mark the item_id as ready to fetch transactions in your database
-        await markItemReady(item_id);
+    if (webhook_type === 'TRANSACTIONS' && webhook_code === 'SYNC_UPDATES_AVAILABLE') {
+        // Handle the SYNC_UPDATES_AVAILABLE webhook
+        console.log(`Sync updates available for item ID: ${item_id}`);
+        syncTransactions();
+        res.status(200).send('SYNC_UPDATES_AVAILABLE webhook received');
+    } else {
+        // Handle other webhooks or ignore
+        res.status(200).send('Webhook received, but not a SYNC_UPDATES_AVAILABLE event');
     }
-
-    res.sendStatus(200); // Acknowledge receipt of the webhook
 });
 
 app.listen(8080, () => {
