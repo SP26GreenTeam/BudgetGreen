@@ -8,7 +8,7 @@ const configuration = new Configuration({
     baseOptions: {
         headers: {
             'PLAID-CLIENT-ID': '65fa0ee42396a5001df1b103',
-            'PLAID-SECRET': '40ba2993a0a84186e4fb2e594031e4',
+            'PLAID-SECRET': '',
         },
     },
 });
